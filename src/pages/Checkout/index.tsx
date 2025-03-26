@@ -1,105 +1,115 @@
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
 import Button from '../../components/Button'
 import Card from '../../components/Card'
 import { Btn, ImageCartao, InputGroup, Row } from './styles'
 import boleto from '../../assets/boleto.png'
 import cartao from '../../assets/cart.jpg'
 
+const validationSchema = Yup.object({
+  fullName: Yup.string().required('Nome completo é obrigatório'),
+  email: Yup.string().email('E-mail inválido').required('E-mail é obrigatório'),
+  cpf: Yup.string()
+    .matches(/^\d{11}$/, 'CPF inválido')
+    .required('CPF é obrigatório'),
+  deliveryEmail: Yup.string()
+    .email('E-mail inválido')
+    .required('E-mail é obrigatório'),
+  confirmDeliveryEmail: Yup.string()
+    .oneOf([Yup.ref('deliveryEmail'), undefined], 'Os e-mails devem coincidir')
+    .required('Confirmação do e-mail é obrigatória'),
+  cardOwner: Yup.string().required('Nome do titular do cartão é obrigatório'),
+  cardCpf: Yup.string()
+    .matches(/^\d{11}$/, 'CPF inválido')
+    .required('CPF do titular é obrigatório'),
+  cardName: Yup.string().required('Nome do cartão é obrigatório'),
+  cardNumber: Yup.string()
+    .matches(/^\d{16}$/, 'Número do cartão inválido')
+    .required('Número do cartão é obrigatório'),
+  cardMonth: Yup.string()
+    .matches(/^\d{2}$/, 'Mês inválido')
+    .required('Mês do vencimento é obrigatório'),
+  cardYear: Yup.string()
+    .matches(/^\d{4}$/, 'Ano inválido')
+    .required('Ano de vencimento é obrigatório'),
+  cardCVV: Yup.string()
+    .matches(/^\d{3,4}$/, 'CVV inválido')
+    .required('CVV é obrigatório')
+})
+
 const Checkout = () => (
-  <div className="container">
-    <Card title="Dados de cobrança">
-      <Row>
-        <InputGroup>
-          <label htmlFor="fullName">Nome completo</label>
-          <input id="fullName" type="text" />
-        </InputGroup>
-        <InputGroup>
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" />
-        </InputGroup>
-        <InputGroup>
-          <label htmlFor="cpf">CPF</label>
-          <input id="cpf" type="text" />
-        </InputGroup>
-      </Row>
-      <h3 className="margin-top">Dados da entrega - conteúdo digital</h3>
-      <Row>
-        <InputGroup>
-          <label htmlFor="deliveryEmail">E-mail</label>
-          <input id="deliveryEmail" type="email" />
-        </InputGroup>
-        <InputGroup>
-          <label htmlFor="confirmDeliveryEmail">Confirme o email</label>
-          <input id="confirmDeliveryEmail" type="email" />
-        </InputGroup>
-      </Row>
-    </Card>
-    <Card title="Pagamento">
-      <div>
-        <div className="btnGroup">
-          <Btn title="Pagar com boleto">
-            <ImageCartao src={boleto} alt="Boleto bancário" />
-            <span>Boleto</span>
-          </Btn>
-          <Btn title="Pagar com cartão">
-            <ImageCartao src={cartao} alt="Cartão de crédito" />
-            <span>Cartão de crédito</span>
-          </Btn>
-        </div>
-        <p>
-          Ao optar por essa forma de pagamento, é importante lembrar que a
-          confirmação pode levar até 3 dias úteis, devido aos prazos
-          estabelecidos pelas instituições financeiras. Portanto, a liberação do
-          código de ativação do jogo adquirido ocorrerá somente após a aprovação
-          do pagamento do boleto.
-        </p>
-      </div>
-    </Card>
-    <Row>
-      <InputGroup>
-        <label htmlFor="cardOwner">Nome do titular do cartão</label>
-        <input type="text" id="cardOwner" />
-      </InputGroup>
-      <InputGroup>
-        <label htmlFor="cardCpf">CPF do titular do cartão</label>
-        <input type="text" id="cardCpf" />
-      </InputGroup>
-    </Row>
-    <Row>
-      <InputGroup>
-        <label htmlFor="cardName">Nome do Cartão</label>
-        <input type="text" id="cardName" />
-      </InputGroup>
-      <InputGroup>
-        <label htmlFor="cardNumber">Número do cartão</label>
-        <input type="text" id="cardNumber" />
-      </InputGroup>
-      <InputGroup maxWidth="123px">
-        <label htmlFor="cardMonth">Mês do vencimento</label>
-        <input type="text" id="cardMonth" />
-      </InputGroup>
-      <InputGroup maxWidth="123px">
-        <label htmlFor="cardYear">Ano de vencimento</label>
-        <input type="text" id="cardYear" />
-      </InputGroup>
-      <InputGroup maxWidth="48px">
-        <label htmlFor="cardCVV">CVV</label>
-        <input type="text" id="cardCVV" placeholder="123" />
-      </InputGroup>
-    </Row>
-    <Row>
-      <InputGroup maxWidth="116px">
-        <label htmlFor="installments">Parcelamento</label>
-        <select id="installments">
-          <option>1x de 200,00</option>
-          <option>2x de 100,00</option>
-          <option>4x de 50,00</option>
-        </select>
-      </InputGroup>
-    </Row>
-    <Button type="button" title="Clique aqui para Finalizar">
-      Finalizar compra
-    </Button>
-  </div>
+  <Formik
+    initialValues={{
+      fullName: '',
+      email: '',
+      cpf: '',
+      deliveryEmail: '',
+      confirmDeliveryEmail: '',
+      cardOwner: '',
+      cardCpf: '',
+      cardName: '',
+      cardNumber: '',
+      cardMonth: '',
+      cardYear: '',
+      cardCVV: ''
+    }}
+    validationSchema={validationSchema}
+    onSubmit={(values) => {
+      console.log('Form submitted:', values)
+    }}
+  >
+    {({ handleSubmit }) => (
+      <Form className="container" onSubmit={handleSubmit}>
+        <Card title="Dados de cobrança">
+          <Row>
+            <InputGroup>
+              <label htmlFor="fullName">Nome completo</label>
+              <Field id="fullName" type="text" name="fullName" />
+              <ErrorMessage name="fullName" component="div" className="error" />
+            </InputGroup>
+            <InputGroup>
+              <label htmlFor="email">Email</label>
+              <Field id="email" type="email" name="email" />
+              <ErrorMessage name="email" component="div" className="error" />
+            </InputGroup>
+            <InputGroup>
+              <label htmlFor="cpf">CPF</label>
+              <Field id="cpf" type="text" name="cpf" />
+              <ErrorMessage name="cpf" component="div" className="error" />
+            </InputGroup>
+          </Row>
+          <h3 className="margin-top">Dados da entrega - conteúdo digital</h3>
+          <Row>
+            <InputGroup>
+              <label htmlFor="deliveryEmail">E-mail</label>
+              <Field id="deliveryEmail" type="email" name="deliveryEmail" />
+              <ErrorMessage
+                name="deliveryEmail"
+                component="div"
+                className="error"
+              />
+            </InputGroup>
+            <InputGroup>
+              <label htmlFor="confirmDeliveryEmail">Confirme o email</label>
+              <Field
+                id="confirmDeliveryEmail"
+                type="email"
+                name="confirmDeliveryEmail"
+              />
+              <ErrorMessage
+                name="confirmDeliveryEmail"
+                component="div"
+                className="error"
+              />
+            </InputGroup>
+          </Row>
+        </Card>
+        <Button type="button" title="Clique aqui para Finalizar">
+          Finalizar compra
+        </Button>
+      </Form>
+    )}
+  </Formik>
 )
 
 export default Checkout
