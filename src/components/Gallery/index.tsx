@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Section from '../Section'
 import { GalleryItem } from '../../pages/Home'
 import Passaro from '../../assets/game/Passaro.png'
@@ -10,7 +11,7 @@ import ferchar from '../../assets/fechar.png'
 import { useState } from 'react'
 import spider from '../../assets/banner-homem-aranha.png'
 
-const mock: GalleryItem[] = [
+const items: GalleryItem[] = [
   {
     type: 'image',
     url: Passaro
@@ -36,12 +37,13 @@ const mock: GalleryItem[] = [
 type Props = {
   defaultCover: string
   name: string
+  items: GalleryItem[]
 }
 
 interface ModalState extends GalleryItem {
   isVisible: boolean
 }
-const Gallery = ({ defaultCover, name }: Props) => {
+const Gallery = ({ defaultCover, name, items }: Props) => {
   const [modal, setModal] = useState<ModalState>({
     isVisible: false,
     type: 'image',
@@ -67,7 +69,7 @@ const Gallery = ({ defaultCover, name }: Props) => {
     <>
       <Section title="Galeria" background="black">
         <Items>
-          {mock.map((media, index) => (
+          {items.map((media, index) => (
             <Item
               key={media.url}
               onClick={() => {

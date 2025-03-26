@@ -6,16 +6,12 @@ import Tag from '../Tag'
 import Button from '../Button'
 import { Game } from '../../pages/Home'
 import { formataPreco } from '../ProductsList'
+import { useGetFeaturedGameQuery } from '../../services/api'
+import { data } from 'react-router-dom'
 
 const Banner = () => {
-  const [game, setGame] = useState<Game | null>(null)
-
-  useEffect(() => {
-    fetch('https://fake-api-tau.vercel.app/api/eplay/destaque')
-      .then((res) => res.json())
-      .then((res) => setGame(res))
-      .catch(() => setGame(null)) // Tratar erro caso a API falhe
-  }, [])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: game, isLoading } = useGetFeaturedGameQuery()
 
   if (!game) {
     return <h3>Carregando...</h3>
@@ -36,7 +32,7 @@ const Banner = () => {
         </div>
         <Button
           type="link"
-          to="/produto"
+          to={`/product${game.id}`}
           title="Clique aqui para aproveitar esta oferta"
         >
           Aproveitar

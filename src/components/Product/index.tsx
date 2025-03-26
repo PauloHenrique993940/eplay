@@ -8,6 +8,7 @@ type Props = {
   description: string
   infos: string[]
   image: string
+  id: number
 }
 const Product = ({
   title,
@@ -15,7 +16,9 @@ const Product = ({
   system,
   description,
   infos,
-  image
+  image,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  id
 }: Props) => {
   const getDescricao = (descricao: string) => {
     if (descricao.length > 95) {
@@ -25,7 +28,7 @@ const Product = ({
     return descricao
   }
   return (
-    <Card>
+    <Card to={`/product/${id}`}>
       <img src={image} alt={title} />
       <Infos>
         {infos.map((info) => (
